@@ -27,7 +27,7 @@ const redirectTo = location.state?.from || "/owner-dashboard";
     setLoading(true);
     try {
       if (!credentialResponse?.credential) throw new Error("Google did not return a sign-in credential.");
-      const response = await fetch("https://safereturn-pwra.onrender.com//api/auth/google", {
+      const response = await fetch("https://safereturn-pwra.onrender.com/api/auth/google", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ credential: credentialResponse.credential }),
@@ -52,7 +52,7 @@ const redirectTo = location.state?.from || "/owner-dashboard";
 
     try {
       const response = await fetch(
-        "https://safereturn-pwra.onrender.com//api/auth/login",
+        "https://safereturn-pwra.onrender.com/api/auth/login",
         {
           method: "POST",
           headers: {
