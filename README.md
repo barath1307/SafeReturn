@@ -25,31 +25,31 @@ Instead of relying entirely on manual searches, users can register items, identi
 
 ### 🏠 Home Page
 
-![SafeReturn Home Page](screenshots/home.png)
+![SafeReturn Home Page](safereturn/Screenshots/Home.png)
 
 ### 🔐 Authentication
 
-![SafeReturn Login Page](screenshots/login.png)
+![SafeReturn Login Page](safereturn/Screenshots/Login.png)
 
 ### 📝 Item Registration
 
-![SafeReturn Item Registration](screenshots/register-item.png)
+![SafeReturn Item Registration](safereturn/Screenshots/Register-item.png)
 
 ### 🤖 AI-Powered Item Analysis
 
-![SafeReturn AI Analysis](screenshots/ai-analysis.png)
+![SafeReturn AI Analysis](safereturn/Screenshots/Ai-analysis.png)
 
 ### 📱 QR Code Generation
 
-![SafeReturn QR Code](screenshots/qr-code.png)
+![SafeReturn QR Code](safereturn/Screenshots/qr-code.png)
 
 ### 📊 Owner Dashboard
 
-![SafeReturn Owner Dashboard](screenshots/owner-dashboard.png)
+![SafeReturn Owner Dashboard](safereturn/Screenshots/owner-dashboard.png)
 
 ### 🔎 Item Search and Tracking
 
-![SafeReturn Item Tracking](screenshots/find-track.png)
+![SafeReturn Item Tracking](safereturn/Screenshots/find-track.png)
 
 ---
 
