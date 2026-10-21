@@ -115,7 +115,7 @@ const redirectTo = location.state?.from || "/owner-dashboard";
 
         {/* HEADING */}
         <h1 className="text-4xl font-black tracking-tight">
-          Welcome back
+          Welcome to SafeReturn
         </h1>
 
         <p className="mt-4 text-base text-slate-400">
