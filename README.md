@@ -321,11 +321,16 @@ The application can be deployed using services appropriate for its architecture.
 
 Production deployment requires the correct API URLs, environment variables, authentication settings, and CORS configuration.
 
-**Deployment status:** Update this section once the live application has been deployed and verified.
+**Deployment status:** Frontend and backend Successfully deployed.
 
-**Live Demo:** Add your deployed application URL here.
-
+**Live Demo:** https://safereturn-web-theta.vercel.app
 ---
+
+| Component | Hosting | URL |
+|---|---|---|
+| React Frontend | Vercel | https://safereturn-web-theta.vercel.app |
+| Node.js / Express Backend | Render | https://safereturn-pwra.onrender.com |
+| Database | MongoDB Atlas | MongoDB Atlas |
 
 ## 🔮 Future Enhancements
 
