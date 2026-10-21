@@ -55,7 +55,7 @@ function FinderItem() {
         setError("");
 
         const response = await fetch(
-          `http://localhost:5000/api/identities/${id}`
+          `https://safereturn-pwra.onrender.com//api/identities/${id}`
         );
 
         const data = await response.json();
@@ -117,7 +117,7 @@ function FinderItem() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/contact-owner",
+        "https://safereturn-pwra.onrender.com//api/contact-owner",
         {
           method: "POST",
           headers: {
@@ -179,7 +179,7 @@ const checkRequestStatus = async () => {
     setStatusError("");
 
     const response = await fetch(
-      `http://localhost:5000/api/contact-request-status/${encodeURIComponent(
+      `https://safereturn-pwra.onrender.com//api/contact-request-status/${encodeURIComponent(
         requestId
       )}`
     );

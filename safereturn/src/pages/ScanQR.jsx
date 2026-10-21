@@ -81,7 +81,7 @@ function ScanQR() {
     try {
       // Verify that the item exists before opening its details.
       const response = await fetch(
-        `http://localhost:5000/api/identities/${encodeURIComponent(id)}`
+        `https://safereturn-pwra.onrender.com//api/identities/${encodeURIComponent(id)}`
       );
 
       const data = await response.json();

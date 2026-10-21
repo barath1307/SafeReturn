@@ -65,7 +65,7 @@ function Home() {
   }
 
   try {
-    const response = await fetch("http://localhost:5000/api/notifications", {
+    const response = await fetch("https://safereturn-pwra.onrender.com//api/notifications", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -110,7 +110,7 @@ const handleTrackStatus = async (event) => {
     setTrackingStatus(null);
 
     const response = await fetch(
-      `http://localhost:5000/api/contact-request-status/${encodeURIComponent(id)}`
+      `https://safereturn-pwra.onrender.com//api/contact-request-status/${encodeURIComponent(id)}`
     );
 
     const data = await response.json();
