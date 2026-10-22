@@ -65,7 +65,7 @@ function Home() {
   }
 
   try {
-    const response = await fetch("https://safereturn-pwra.onrender.com//api/notifications", {
+    const response = await fetch("https://safereturn-pwra.onrender.com/api/notifications", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -110,7 +110,7 @@ const handleTrackStatus = async (event) => {
     setTrackingStatus(null);
 
     const response = await fetch(
-      `https://safereturn-pwra.onrender.com//api/contact-request-status/${encodeURIComponent(id)}`
+      `https://safereturn-pwra.onrender.com/api/contact-request-status/${encodeURIComponent(id)}`
     );
 
     const data = await response.json();
@@ -389,7 +389,7 @@ const handleTrackStatus = async (event) => {
     setTrackingError("");
     setTrackingStatus(null);
   }}
-  className="flex items-center justify-center gap-2 rounded-xl border border-cyan-400/30 bg-cyan-400/5 px-6 py-3.5 font-semibold text-cyan-300 transition hover:bg-cyan-400/10"
+  className="mt-4 flex items-center justify-center gap-2 rounded-xl border border-cyan-400/30 bg-cyan-400/5 px-6 py-3.5 font-semibold text-cyan-300 transition hover:bg-cyan-400/10"
 >
   <Search size={18} />
   Track Request Status

@@ -15,3 +15,11 @@ body {
   color: white;
   font-family: Inter, system-ui, sans-serif;
 }
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: #ffffff !important;
+  -webkit-box-shadow: 0 0 0 1000px #07111f inset !important;
+  transition: background-color 9999s ease-in-out 0s;
+}

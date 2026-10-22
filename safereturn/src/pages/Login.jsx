@@ -95,7 +95,7 @@ const redirectTo = location.state?.from || "/owner-dashboard";
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#020617] px-4 py-10 text-white">
-      <div className="w-full max-w-lg rounded-3xl border border-white/10 bg-white/[0.025] p-6 sm:p-10">
+      <div className="w-full min-w-0 max-w-lg rounded-3xl border border-white/10 bg-white/[0.025] p-4 sm:p-10">
 
         {/* LOGO */}
         <Link to="/" className="mb-8 inline-flex items-center gap-3">
@@ -114,8 +114,8 @@ const redirectTo = location.state?.from || "/owner-dashboard";
         </Link>
 
         {/* HEADING */}
-        <h1 className="text-4xl font-black tracking-tight">
-          Welcome to SafeReturn
+        <h1 className="whitespace-nowrap text-2xl font-black tracking-tight sm:text-4xl">
+         Welcome to SafeReturn
         </h1>
 
         <p className="mt-4 text-base text-slate-400">
@@ -133,16 +133,18 @@ const redirectTo = location.state?.from || "/owner-dashboard";
         )}
 
         {/* GOOGLE SIGN-IN */}
-        <div className="mt-7 flex justify-center">
-          <GoogleLogin
-            onSuccess={handleGoogleSuccess}
-            onError={() => setError("Google sign-in was cancelled or failed. Please try again.")}
-            text="signin_with"
-            shape="rectangular"
-            theme="filled_black"
-            width="320"
-          />
-        </div>
+<div className="mt-7 flex w-full min-w-0 justify-center overflow-hidden">
+  <GoogleLogin
+    onSuccess={handleGoogleSuccess}
+    onError={() =>
+      setError("Google sign-in was cancelled or failed. Please try again.")
+    }
+    text="signin_with"
+    shape="rectangular"
+    theme="filled_black"
+    width={Math.min(320, window.innerWidth - 100)}
+  />
+</div>
         <div className="mt-6 flex items-center gap-3 text-xs uppercase tracking-widest text-slate-600">
           <span className="h-px flex-1 bg-white/10" />
           or use email

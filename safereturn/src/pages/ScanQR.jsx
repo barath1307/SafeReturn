@@ -81,7 +81,7 @@ function ScanQR() {
     try {
       // Verify that the item exists before opening its details.
       const response = await fetch(
-        `https://safereturn-pwra.onrender.com//api/identities/${encodeURIComponent(id)}`
+        `https://safereturn-pwra.onrender.com/api/identities/${encodeURIComponent(id)}`
       );
 
       const data = await response.json();
@@ -120,7 +120,7 @@ function ScanQR() {
         { facingMode: "environment" },
         {
           fps: 10,
-          qrbox: { width: 230, height: 230 },
+          qrbox: { width: 400, height: 400},
         },
         async (decodedText) => {
           if (handledRef.current) return;

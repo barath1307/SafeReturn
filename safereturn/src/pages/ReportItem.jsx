@@ -101,7 +101,7 @@ function ReportItem() {
       formData.append("image", image);
 
       const response = await fetch(
-        "https://safereturn-pwra.onrender.com//api/analyze-item",
+        "https://safereturn-pwra.onrender.com/api/analyze-item",
         {
           method: "POST",
           body: formData,
@@ -151,7 +151,7 @@ function ReportItem() {
   }
 
   const response = await fetch(
-    "https://safereturn-pwra.onrender.com//api/identities",
+    "https://safereturn-pwra.onrender.com/api/identities",
     {
       method: "POST",
       headers: {

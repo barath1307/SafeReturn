@@ -14,8 +14,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
-const API_BASE = "https://safereturn-pwra.onrender.com/";
-
+const API_BASE = "https://safereturn-pwra.onrender.com";
 function OwnerDashboard() {
   const [items, setItems] = useState([]);
   const [requests, setRequests] = useState([]);
