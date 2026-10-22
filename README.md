@@ -329,7 +329,7 @@ Production deployment requires the correct API URLs, environment variables, auth
 | Component | Hosting | URL |
 |---|---|---|
 | React Frontend | Vercel | https://safereturn-web-theta.vercel.app |
-| Node.js / Express Backend | Render | https://https://safereturn-pwra.onrender.com/ |
+| Node.js / Express Backend | Render | https://http://localhost:5000/ |
 | Database | MongoDB Atlas | MongoDB Atlas |
 
 ## 🔮 Future Enhancements
