@@ -10,7 +10,6 @@ const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { OAuth2Client } = require("google-auth-library");
-const { Resend } = require("resend");
 
 const User = require("./models/User");
 const Identity = require("./models/Identity");
@@ -22,9 +21,6 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID || process.env.VITE_GOOGLE_CLIENT_ID);
-const resend = process.env.RESEND_API_KEY
-  ? new Resend(process.env.RESEND_API_KEY)
-  : null;
 
 // ===============================
 // DATABASE
@@ -761,56 +757,88 @@ app.post("/api/contact-owner", async (req, res) => {
       
     });
 // ===============================
-// EMAIL NOTIFICATION TO ITEM OWNER
+// EMAIL NOTIFICATION TO ITEM OWNER — BREVO
 // ===============================
 console.log("EMAIL DEBUG: Contact request created");
-console.log("EMAIL DEBUG: Resend configured =", Boolean(resend));
+console.log(
+  "EMAIL DEBUG: Brevo configured =",
+  Boolean(process.env.BREVO_API_KEY)
+);
 console.log("EMAIL DEBUG: Owner ID =", String(identity.ownerId || ""));
+
 try {
-  if (resend && identity.ownerId) {
-    console.log("EMAIL DEBUG: Entered owner email block");
+  if (process.env.BREVO_API_KEY && identity.ownerId) {
     const owner = await User.findById(identity.ownerId)
       .select("name email")
       .lean();
 
     if (owner?.email) {
-      const { error: emailError } = await resend.emails.send({
-        from: process.env.RESEND_FROM_EMAIL,
-        to: [owner.email],
-        subject: "New SafeReturn contact request",
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; color: #0f172a;">
-            <h2 style="color: #0891b2;">New SafeReturn Request</h2>
+      const safeName = String(owner.name || "there")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
 
-            <p>Hello ${String(owner.name || "there")
-              .replace(/&/g, "&amp;")
-              .replace(/</g, "&lt;")
-              .replace(/>/g, "&gt;")},</p>
+      const response = await fetch(
+        "https://api.brevo.com/v3/smtp/email",
+        {
+          method: "POST",
+          headers: {
+            accept: "application/json",
+            "api-key": process.env.BREVO_API_KEY,
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({
+            sender: {
+              name: "SafeReturn",
+              email: process.env.BREVO_FROM_EMAIL,
+            },
+            to: [
+              {
+                email: owner.email,
+                name: owner.name || "SafeReturn User",
+              },
+            ],
+            subject: "New SafeReturn contact request",
+            htmlContent: `
+              <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; color: #0f172a;">
+                <h2 style="color: #0891b2;">New SafeReturn Request</h2>
+                <p>Hello ${safeName},</p>
+                <p>Someone has contacted you about your registered item.</p>
+                <p><strong>SafeReturn ID:</strong> ${safeReturnId}</p>
+                <p><strong>Request ID:</strong> ${contactRequest._id}</p>
+                <p>Please sign in to SafeReturn and open your Owner Dashboard to view the message.</p>
+                <p style="color: #64748b;">SafeReturn — Privacy-first Lost & Found</p>
+              </div>
+            `,
+          }),
+        }
+      );
 
-            <p>Someone has contacted you about your registered item.</p>
+      const result = await response.json().catch(() => ({}));
 
-            <p><strong>SafeReturn ID:</strong> ${safeReturnId}</p>
-
-            <p><strong>Request ID:</strong> ${contactRequest._id}</p>
-
-            <p>Please sign in to SafeReturn and open your Owner Dashboard to view the message.</p>
-
-            <p style="color: #64748b;">SafeReturn — Privacy-first Lost & Found</p>
-          </div>
-        `,
-      });
-
-      if (emailError) {
-        console.error("Resend email error:", emailError.message);
+      if (!response.ok) {
+        console.error(
+          "Brevo email error:",
+          response.status,
+          JSON.stringify(result)
+        );
       } else {
-        console.log("Owner email notification sent.");
+        console.log("Owner email notification accepted by Brevo.");
       }
+    } else {
+      console.log("EMAIL DEBUG: Owner email not found");
     }
+  } else {
+    console.log("EMAIL DEBUG: Brevo API key or owner ID missing");
   }
 } catch (emailError) {
-  // Email failure should not cancel a successfully saved contact request.
-  console.error("Owner email notification failed:", emailError.message);
+  // Email failure must not cancel a successfully saved contact request.
+  console.error(
+    "Brevo email notification failed:",
+    emailError.message
+  );
 }
+
     return res.status(201).json({
       success: true,
       message: "Your secure contact request has been submitted.",
