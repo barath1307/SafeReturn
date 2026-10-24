@@ -23,3 +23,39 @@ input:-webkit-autofill:active {
   -webkit-box-shadow: 0 0 0 1000px #07111f inset !important;
   transition: background-color 9999s ease-in-out 0s;
 }
+
+/* Paytm-style QR scanner: contained camera preview with a medium scan frame. */
+.paytm-scanner {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  height: clamp(260px, 48vw, 380px);
+  margin-inline: auto;
+  padding: 0;
+  background: #000;
+}
+.paytm-scanner video {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  object-fit: cover !important;
+  border-radius: 1rem;
+}
+.paytm-scanner canvas {
+  max-width: 100%;
+}
+.paytm-scanner #qr-shaded-region {
+  border-color: #22d3ee !important;
+  border-width: 4px !important;
+  border-radius: 16px !important;
+}
+.paytm-scanner img {
+  object-fit: contain;
+}
+@media (max-width: 640px) {
+  .paytm-scanner {
+    height: 300px;
+    border-radius: 1rem;
+  }
+}

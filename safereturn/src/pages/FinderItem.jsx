@@ -16,6 +16,8 @@ function FinderItem() {
   const { id } = useParams();
 
   const [item, setItem] = useState(null);
+  const [isOwnItem, setIsOwnItem] = useState(false);
+  const [ownershipChecked, setOwnershipChecked] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -88,12 +90,61 @@ function FinderItem() {
     }
   }, [id]);
 
+  // Check whether the signed-in user owns this item. The public item API
+  // intentionally does not expose owner IDs, so compare against the
+  // authenticated user's own-items endpoint.
+  useEffect(() => {
+    let cancelled = false;
+    const checkOwnership = async () => {
+      const token = localStorage.getItem("safereturn_token");
+      if (!token || !id) {
+        setIsOwnItem(false);
+        setOwnershipChecked(true);
+        return;
+      }
+      try {
+        const response = await fetch(
+          "https://safereturn-pwra.onrender.com/api/identities/mine",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        if (!response.ok) {
+          if (!cancelled) setOwnershipChecked(true);
+          return;
+        }
+        const data = await response.json();
+        const ownItems = Array.isArray(data.items)
+          ? data.items
+          : Array.isArray(data.identities)
+          ? data.identities
+          : [];
+        const ownsItem = ownItems.some(
+          (ownedItem) =>
+            (ownedItem.safeReturnId || ownedItem.id) === decodeURIComponent(id)
+        );
+        if (!cancelled) setIsOwnItem(ownsItem);
+      } catch (ownershipError) {
+        console.warn("Unable to verify item ownership:", ownershipError);
+      } finally {
+        if (!cancelled) setOwnershipChecked(true);
+      }
+    };
+    setOwnershipChecked(false);
+    checkOwnership();
+    return () => { cancelled = true; };
+  }, [id]);
+
   // ==========================================
   // SEND CONTACT REQUEST
   // ==========================================
 
   const sendContactRequest = async (event) => {
     event.preventDefault();
+
+    if (isOwnItem) {
+      setShowContact(false);
+      setError("You cannot contact yourself about an item you registered.");
+      return;
+    }
 
     if (!finderName.trim()) {
       setError("Please enter your name.");
@@ -550,23 +601,33 @@ const checkRequestStatus = async () => {
 
             {/* CONTACT OWNER BUTTON */}
 
-            <button
-              type="button"
-              onClick={() => {
-                setShowContact(true);
-                setContactSuccess(false);
-                setError("");
-              }}
-              className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-400 px-6 py-4 font-bold text-slate-950 transition hover:bg-cyan-300"
-            >
-              <MessageCircle size={20} />
-              Contact Owner
-            </button>
+            {ownershipChecked && !isOwnItem && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowContact(true);
+                    setContactSuccess(false);
+                    setError("");
+                  }}
+                  className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-400 px-6 py-4 font-bold text-slate-950 transition hover:bg-cyan-300"
+                >
+                  <MessageCircle size={20} />
+                  Contact Owner
+                </button>
 
-            <p className="mt-4 text-center text-xs text-slate-600">
-              Your contact request can be sent without
-              exposing personal information.
-            </p>
+                <p className="mt-4 text-center text-xs text-slate-600">
+                  Your contact request can be sent without
+                  exposing personal information.
+                </p>
+              </>
+            )}
+
+            {isOwnItem && (
+              <div className="mt-6 rounded-xl border border-cyan-400/20 bg-cyan-400/5 p-4 text-sm text-cyan-200">
+                This is your registered item. Contact Owner is unavailable for your own item.
+              </div>
+            )}
           </div>
         </div>
       </main>
@@ -575,7 +636,7 @@ const checkRequestStatus = async () => {
           CONTACT OWNER MODAL
       ========================================== */}
 
-      {showContact && (
+      {showContact && !isOwnItem && (
         <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-black/70 px-4 py-6 backdrop-blur-sm sm:items-center">
           <div className="my-auto w-full max-w-lg rounded-3xl border border-white/10 bg-[#07111f] p-6 shadow-2xl sm:p-8">
             {!contactSuccess ? (

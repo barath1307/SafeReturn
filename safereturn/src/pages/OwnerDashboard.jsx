@@ -11,8 +11,11 @@ import {
   Trash2,
   MoreVertical,
   X,
+  QrCode,
+  Download,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import QRCode from "qrcode";
 
 const API_BASE = "https://safereturn-pwra.onrender.com";
 function OwnerDashboard() {
@@ -24,6 +27,9 @@ function OwnerDashboard() {
   const [deletingRequestId, setDeletingRequestId] = useState(null);
   const [openRequestMenu, setOpenRequestMenu] = useState(null);
   const [error, setError] = useState("");
+  const [qrItem, setQrItem] = useState(null);
+  const [qrDataUrl, setQrDataUrl] = useState("");
+  const [qrError, setQrError] = useState("");
 
   // ===============================
   // LOAD ITEMS AND CONTACT REQUESTS
@@ -139,6 +145,29 @@ function OwnerDashboard() {
 
     loadDashboard();
   }, []);
+
+  // ===============================
+  // VIEW / DOWNLOAD OWNER QR CODE
+  // ===============================
+  const handleViewQr = async (item) => {
+    const safeReturnId = item.safeReturnId || item.id;
+    const itemUrl = `${window.location.origin}/item/${encodeURIComponent(safeReturnId)}`;
+    try {
+      setQrError("");
+      setQrDataUrl("");
+      setQrItem(item);
+      const dataUrl = await QRCode.toDataURL(itemUrl, {
+        width: 320,
+        margin: 2,
+        errorCorrectionLevel: "H",
+        color: { dark: "#020617", light: "#FFFFFF" },
+      });
+      setQrDataUrl(dataUrl);
+    } catch (qrGenerationError) {
+      console.error("QR generation failed:", qrGenerationError);
+      setQrError("Unable to generate this item's QR code. Please try again.");
+    }
+  };
 
   // ===============================
   // DELETE REGISTERED ITEM
@@ -621,7 +650,7 @@ function OwnerDashboard() {
                     </p>
                   </div>
 
-                  <div className="mt-4">
+                  <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
                     <Link
                       to={`/item/${encodeURIComponent(
                         item.safeReturnId || item.id
@@ -630,6 +659,14 @@ function OwnerDashboard() {
                     >
                       View item details →
                     </Link>
+                    <button
+                      type="button"
+                      onClick={() => handleViewQr(item)}
+                      className="inline-flex items-center gap-2 rounded-xl border border-cyan-400/30 bg-cyan-400/10 px-4 py-2.5 text-sm font-semibold text-cyan-300 transition hover:bg-cyan-400/20"
+                    >
+                      <QrCode size={17} />
+                      View QR Code
+                    </button>
                   </div>
                 </div>
               ))}
@@ -891,6 +928,37 @@ function OwnerDashboard() {
             </div>
           </div>
         </div>
+      {qrItem && (
+        <div className="fixed inset-0 z-[80] flex items-center justify-center overflow-y-auto bg-black/75 px-4 py-6 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-3xl border border-white/10 bg-[#07111f] p-6 text-center shadow-2xl">
+            <div className="flex items-start justify-between gap-4 text-left">
+              <div>
+                <h2 className="text-xl font-bold text-white">Item QR Code</h2>
+                <p className="mt-1 text-sm text-slate-400">{qrItem.itemName}</p>
+                <p className="mt-1 text-xs text-cyan-300">{qrItem.safeReturnId || qrItem.id}</p>
+              </div>
+              <button type="button" onClick={() => { setQrItem(null); setQrDataUrl(""); setQrError(""); }} className="rounded-lg p-2 text-slate-400 hover:bg-white/10 hover:text-white" aria-label="Close QR code">
+                <X size={20} />
+              </button>
+            </div>
+            {qrError ? (
+              <p className="mt-6 text-sm text-red-400">{qrError}</p>
+            ) : qrDataUrl ? (
+              <>
+                <div className="mx-auto mt-6 inline-block rounded-2xl bg-white p-4">
+                  <img src={qrDataUrl} alt={`QR code for ${qrItem.itemName}`} className="h-64 w-64 max-w-full" />
+                </div>
+                <p className="mt-4 text-sm leading-6 text-slate-400">Print or attach this QR code to your registered item. Anyone who scans it can view the public item page.</p>
+                <a href={qrDataUrl} download={`SafeReturn-${qrItem.safeReturnId || qrItem.id}-QR.png`} className="mt-5 inline-flex items-center justify-center gap-2 rounded-xl bg-cyan-400 px-5 py-3 font-bold text-slate-950 hover:bg-cyan-300">
+                  <Download size={18} /> Download QR Code
+                </a>
+              </>
+            ) : (
+              <p className="mt-8 text-sm text-slate-400">Generating QR code…</p>
+            )}
+          </div>
+        </div>
+      )}
       </main>
     </div>
   );

@@ -10,6 +10,7 @@ import {
   ArrowRight,
   CheckCircle2,
   ScanLine,
+  PackageSearch,
   KeyRound,
   MessageCircle,
   Bell,
@@ -377,7 +378,7 @@ const handleTrackStatus = async (event) => {
                 to="/scan"
                 className="flex items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/5 px-6 py-3.5 font-semibold text-white transition hover:bg-white/10"
               >
-                <ScanLine size={18} />
+                <PackageSearch size={18} />
 
                 Report Lost Item
               </Link>

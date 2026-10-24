@@ -747,6 +747,18 @@ app.post("/api/contact-owner", async (req, res) => {
       });
     }
 
+    // Prevent an authenticated owner from contacting themselves about their own item.
+    if (
+      authenticatedUser?._id &&
+      identity.ownerId &&
+      String(authenticatedUser._id) === String(identity.ownerId)
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "You cannot contact yourself about an item you registered.",
+      });
+    }
+
     const contactRequest = await ContactRequest.create({
       safeReturnId,
       identity: identity._id,
